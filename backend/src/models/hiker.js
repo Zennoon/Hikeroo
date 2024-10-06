@@ -32,7 +32,26 @@ const hikerSchema = new mongoose.Schema({
   friendRequests: [{
     senderId: mongoose.ObjectId,
   }],
-});
+  invites: [{
+    hikeId: mongoose.ObjectId,
+    senderId: mongoose.ObjectId,
+  }],},
+  {
+    methods: {
+      toJson() {
+        return {
+          id: this.id,
+          firstName: this.firstName,
+          lastName: this.lastName,
+          email: this.email,
+          friends: this.friends,
+          friendRequests: this.friendRequests,
+          invites: this.invites,
+        }
+      }
+    }
+  }
+);
 
 const Hiker = dbClient.db.model('Hiker', hikerSchema);
 export default Hiker;

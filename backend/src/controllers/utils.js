@@ -6,7 +6,6 @@ const SECRET = process.env.SECRET;
 const authenticateUser = async function(req, res) {
   const token = req.cookies['Hikeroo-Token'];
 
-  console.log(token);
   try {
     const jwtUser = jwt.verify(token, SECRET);
 
