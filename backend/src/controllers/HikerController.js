@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-import Hike from '../models/hike'
 import Hiker from '../models/hiker';
 import authenticateUser from './utils';
 
@@ -175,4 +173,4 @@ class HikerController {
   }
 }
 
-export default HikerController
+export default HikerController;
