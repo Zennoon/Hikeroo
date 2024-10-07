@@ -26,8 +26,18 @@ const hikerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  friends: [mongoose.ObjectId],
-  friendRequests: [mongoose.ObjectId],
+  friends: [{
+    friendId: {
+      type: mongoose.ObjectId,
+      required: true,
+    }
+  }],
+  friendRequests: [{
+    hikerId: {
+      type: mongoose.ObjectId,
+      required: true,
+    }
+  }],
   invites: [{
     hikeId: mongoose.ObjectId,
     senderId: mongoose.ObjectId,

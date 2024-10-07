@@ -8,7 +8,7 @@ class HikerController {
     const hiker = await authenticateUser(req, res);
 
     if (hiker) {
-      const promises = hiker.friends.map((friendId) => {
+      const promises = hiker.friends.map(({ friendId }) => {
         const promise = (async () => {
           const friend = await Hiker.findById(friendId);
 
@@ -28,9 +28,9 @@ class HikerController {
     const hiker = await authenticateUser(req, res);
 
     if (hiker) {
-      const promises = hiker.friendRequests.map((friendId) => {
+      const promises = hiker.friendRequests.map(({ hikerId }) => {
         const promise = (async () => {
-          const friend = await Hiker.findById(friendId);
+          const friend = await Hiker.findById(hikerId);
 
           if (friend) {
             return friend.toJson();
@@ -47,17 +47,34 @@ class HikerController {
   static async sendFriendRequest(req, res) {
     const hiker = await authenticateUser(req, res);
     if (hiker) {
-      const { id } = req.body;
-      const hiker2 = await Hiker.findById(id);
+      const { hikerId } = req.body;
+      const hiker2 = await Hiker.findById(hikerId);
 
       if (hiker2 && hiker.id !== hiker2.id) {
-        if (!hiker2.friendRequests.includes(hiker.id)) {
-          hiker2.friendRequests.push(hiker.id.toString());
-          await hiker2.save();
+        const hikerHasFriendRequest = await Hiker.findOne({
+          _id: hikerId,
+          friendRequests: {
+            $elemMatch: { hikerId: hiker._id }
+          },
+        });
+        const hikerHasFriend = await Hiker.findOne({
+          _id: hikerId,
+          friends: {
+            $elemMatch: { friendId: hiker._id }
+          },
+        });
+        if (!hikerHasFriendRequest && !hikerHasFriend) {
+          await Hiker.updateOne({
+            _id: hikerId,
+          }, {
+            $push: {
+              friendRequests: { hikerId: hiker._id },
+            }
+          });
         }
         return res.json({});
       }
-      return res.status(400).json({ error: 'Id not recognized' }); 
+      return res.status(404).json({ error: 'Unrecognized ID' }); 
     }
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -65,21 +82,36 @@ class HikerController {
   static async acceptFriendRequest(req, res) {
     const hiker = await authenticateUser(req, res);
     if (hiker) {
-      const { id } = req.body;
-      const hiker2 = await Hiker.findById(id);
+      const { hikerId } = req.body;
+      const hikerHasFriendRequest = await Hiker.findOne({
+        _id: hiker._id,
+        friendRequests: {
+          $elemMatch: { hikerId }
+        },
+      });
 
-      if (hiker2) {
-        if (hiker.friendRequests.includes(hiker2.id)) {
-          hiker.friendRequests.splice(hiker.friendRequests.indexOf(hiker2.id), 1);
-          hiker.friends.push(hiker2.id);
-          hiker2.friends.push(hiker.id);
-          await hiker.save();
-          await hiker2.save();
-          return res.json({});
-        }
-        return res.status(404).json({ error: 'No friend request for that Id' });
+      if (hikerHasFriendRequest) {
+        await Hiker.updateOne({
+          _id: hiker._id,
+        }, {
+          $pull: {
+            friendRequests: { hikerId },
+          },
+          $push: {
+            friends: { friendId: hikerId },
+          },
+        });
+
+        await Hiker.updateOne({
+          _id: hikerId,
+        }, {
+          $push: {
+            friends: { friendId: hiker._id },
+          },
+        })
+        return res.json({});
       }
-      return res.status(400).json({ error: 'Id not recognized' });
+      return res.status(404).json({ error: 'Friend request not found' });
     }
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -87,20 +119,24 @@ class HikerController {
   static async rejectFriendRequest(req, res) {
     const hiker = await authenticateUser(req, res);
     if (hiker) {
-      const { id } = req.body;
-      const hiker2 = await Hiker.findById(id);
-
-      if (hiker2) {
-        if (hiker.friendRequests.includes(hiker2.id)) {
-          hiker.friendRequests.splice(hiker.friendRequests.indexOf(hiker2.id), 1);
-          await hiker.save();
-          await hiker2.save();
-          console.log(hiker, hiker2);
-          return res.json({});
-        }
-        return res.status(404).json({ error: 'No friend request for that Id' });
+      const { hikerId } = req.body;
+      const hikerHasFriendRequest = await Hiker.findOne({
+        _id: hiker._id,
+        friendRequests: {
+          $elemMatch: { hikerId },
+        },
+      });
+      if (hikerHasFriendRequest) {
+        await Hiker.updateOne({
+          _id: hiker._id,
+        }, {
+          $pull: {
+            friendRequests: { hikerId }
+          }
+        });
+        return res.json({});
       }
-      return res.status(400).json({ error: 'Id not recognized' });
+      return res.status(404).json({ error: 'Friend request not found' });
     }
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -108,28 +144,32 @@ class HikerController {
   static async unfriend(req, res) {
     const hiker = await authenticateUser(req, res);
     if (hiker) {
-      const { id } = req.body;
-      const hiker2 = await Hiker.findById(id);
-
-      if (hiker2) {
-        if (hiker.friends.includes(hiker2.id)) {
-          await Hiker.updateOne({ id: hiker.id }, {
-            $pullAll: {
-              friends: hiker2.id,
-            }
-          });
-          await Hiker.updateOne({ id: hiker2.id }, {
-            $pullAll: {
-              friends: hiker.id,
-            }
-          });
-          await hiker.save();
-          await hiker2.save();
-          return res.json({});
+      const { friendId } = req.body;
+      const hikerHasFriend = await Hiker.findOne({
+        _id: hiker._id,
+        friends: {
+          $elemMatch: { friendId },
         }
-        return res.status(404).json({ error: 'No friend with that Id' });
+      });
+
+      if (hikerHasFriend) {
+        await Hiker.updateOne({
+          _id: hiker._id,
+        }, {
+          $pull: {
+            friends: { friendId },
+          },
+        });
+        await Hiker.updateOne({
+          _id: friendId,
+        }, {
+          $pull: {
+            friends: { friendId: hiker._id },
+          },
+        });
+        return res.json({});
       }
-      return res.status(400).json({ error: 'Id not recognized' });
+      return res.status(404).json({ error: 'Unrecognized ID' });
     }
     return res.status(401).json({ error: 'Unauthorized' });
   }

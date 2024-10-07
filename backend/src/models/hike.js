@@ -34,7 +34,7 @@ const hikeSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  members: [{
+  hikers: [{
     hikerId: {
       type: mongoose.ObjectId,
       required: true,
