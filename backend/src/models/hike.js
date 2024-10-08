@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import dbClient from "./dbClient";
+import mongoose from 'mongoose';
+import dbClient from './dbClient';
 
 const hikeSchema = new mongoose.Schema({
   createdAt: {
@@ -50,8 +50,23 @@ const hikeSchema = new mongoose.Schema({
       required: true,
     },
     image: String,
-  }],
-});
+  }],}, {
+    methods: {
+      toJson() {
+        return {
+          id: this.id,
+          title: this.title,
+          description: this.description,
+          country: this.country,
+          city: this.city,
+          startDate: this.startDate,
+          duration: this.duration,
+          hikers: this.hikers,
+        }
+      }
+    }
+  }
+);
 
 const Hike = dbClient.db.model('Hike', hikeSchema);
 export default Hike;
