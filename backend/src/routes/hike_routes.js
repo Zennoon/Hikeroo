@@ -12,6 +12,8 @@ hikeRouter.get('/my_hikes', HikeController.showMyHikes);
 
 hikeRouter.post('/my_hikes', HikeController.joinHike);
 
+hikeRouter.delete('/my_hikes', HikeController.leaveHike);
+
 hikeRouter.get('/invites', HikeController.showHikeInvites);
 
 hikeRouter.post('/invites', HikeController.sendHikeInvite);
@@ -19,5 +21,6 @@ hikeRouter.post('/invites', HikeController.sendHikeInvite);
 hikeRouter.delete('/invites', HikeController.rejectHikeInvite);
 
 hikeRouter.post('/accept_invite', HikeController.acceptHikeInvite);
+
 
 export default hikeRouter;

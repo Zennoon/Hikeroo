@@ -126,7 +126,7 @@ class HikeController {
         },
       });
 
-      if (hike && hiker2 && hikerHasFriend) {
+      if (hike && hiker2 && hiker._id !== hiker2._id && hikerHasFriend) {
         const hikerHasInvite = await Hiker.findOne({
           _id: hiker2._id,
           invites: {
@@ -242,6 +242,39 @@ class HikeController {
             },
           },
         });
+        return res.json({});
+      }
+      return res.status(404).json({ error: 'Unrecognized ID' });
+    }
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  static async leaveHike(req, res) {
+    const hiker = await authenticateUser(req, res);
+
+    if (hiker) {
+      const { hikeId } = req.body;
+      const hike = await Hike.findById(hikeId);
+      const hikerInHike = await Hike.findOne({
+        _id: (hike ? hike._id : hikeId),
+        hikers: {
+          $elemMatch: { hikerId: hiker._id },
+        },
+      });
+      if (hikerInHike) {
+        const updatedHike = await Hike.findOneAndUpdate({
+          _id: (hike._id),
+        }, {
+          $pull: {
+            hikers: { hikerId: hiker._id },
+          },
+        }, { new: true });
+
+        if (!updatedHike.hikers.length) {
+          await Hike.deleteOne({
+            _id: hike._id,
+          });
+        }
         return res.json({});
       }
       return res.status(404).json({ error: 'Unrecognized ID' });
