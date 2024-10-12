@@ -1,13 +1,17 @@
+import fs from 'fs';
+import { v4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import sha1 from 'sha1';
 import Hiker from '../models/hiker';
 import authenticateUser from './utils';
+import { networkInterfaces } from 'os';
 
 const SECRET = process.env.SECRET;
 
 class AuthController {
   static async signUp(req, res) {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName } = JSON.parse(req.fields.json);
+    const { image } = req.files;
 
     const fields = {
       email,
@@ -32,6 +36,14 @@ class AuthController {
       firstName,
       lastName,
     });
+
+    if (image) {
+      const fileName = v4();
+      const newFilePath = `./public/profile_pics/${fileName}`;
+
+      await fs.promises.rename(image.path, newFilePath);
+      newUser.image = fileName;
+    }
 
     await newUser.save();
     const token = jwt.sign({ id: newUser.id }, SECRET, { expiresIn: "1h" });

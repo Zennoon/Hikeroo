@@ -1,10 +1,13 @@
 import express from 'express';
+import cors from 'cors';
 import authRouter from './routes/auth_routes';
 import hikeRouter from './routes/hike_routes';
 import hikerRouter from './routes/hiker_routes';
 import userRouter from './routes/user_routes'
 
 const app = express();
+
+app.use(cors());
 
 app.use(authRouter);
 app.use(hikeRouter);

@@ -41,7 +41,9 @@ const hikerSchema = new mongoose.Schema({
   invites: [{
     hikeId: mongoose.ObjectId,
     senderId: mongoose.ObjectId,
-  }]},
+  }],
+  image: String
+  },
   {
     methods: {
       toJson() {
