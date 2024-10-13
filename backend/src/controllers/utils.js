@@ -4,7 +4,7 @@ import Hiker from '../models/hiker';
 const SECRET = process.env.SECRET;
 
 const authenticateUser = async function(req, res) {
-  const token = req.cookies['Hikeroo-Token'];
+  const token = req.headers['x-hikeroo-token'];
 
   try {
     const jwtUser = jwt.verify(token, SECRET);

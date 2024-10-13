@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth_routes';
 import hikeRouter from './routes/hike_routes';
 import hikerRouter from './routes/hiker_routes';
@@ -7,7 +8,11 @@ import userRouter from './routes/user_routes'
 
 const app = express();
 
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
 
 app.use(authRouter);
 app.use(hikeRouter);

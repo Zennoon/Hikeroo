@@ -1,12 +1,13 @@
 import express from 'express';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import formidable from 'express-formidable';
 import AuthController from '../controllers/AuthController';
 
 const authRouter = express.Router();
 
-authRouter.use(express.json());
 authRouter.use(cookieParser());
+authRouter.use(express.json());
 
 authRouter.post('/signup', formidable(), AuthController.signUp);
 

@@ -4,13 +4,12 @@ import jwt from 'jsonwebtoken';
 import sha1 from 'sha1';
 import Hiker from '../models/hiker';
 import authenticateUser from './utils';
-import { networkInterfaces } from 'os';
 
 const SECRET = process.env.SECRET;
 
 class AuthController {
   static async signUp(req, res) {
-    const { email, password, firstName, lastName } = JSON.parse(req.fields.json);
+    const { email, password, firstName, lastName } = req.fields.json;
     const { image } = req.files;
 
     const fields = {
@@ -44,15 +43,15 @@ class AuthController {
       await fs.promises.rename(image.path, newFilePath);
       newUser.image = fileName;
     }
-
     await newUser.save();
     const token = jwt.sign({ id: newUser.id }, SECRET, { expiresIn: "1h" });
-    res.cookie('Hikeroo-Token', token);
+    res.setHeader('Set-Cookie', `Hikeroo-Token: ${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Lax;`);
     return res.status(201).json({
       id: newUser.id,
       email,
       firstName,
       lastName,
+      token,
     });
   }
 
@@ -78,10 +77,13 @@ class AuthController {
       return res.status(400).json({ error: 'Wrong password' });
     }
     const token = jwt.sign({ id: hiker.id }, SECRET, { expiresIn: '1h' });
-    res.cookie('Hikeroo-Token', token);
-    return res.status(200).json({
+    return res.cookie('Hikeroo-Token', token).send({
       id: hiker.id,
       email,
+      firstName: hiker.firstName,
+      lastName: hiker.lastName,
+      image: hiker.image,
+      token,
     });
   }
 

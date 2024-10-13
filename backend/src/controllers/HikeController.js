@@ -58,7 +58,8 @@ class HikeController {
     const hiker = await authenticateUser(req, res);
 
     if (hiker) {
-      const { page } = req.body;
+      const { page } = req.query;
+      console.log(hiker, page);
       const hikes = await Hike.find({}).skip(20 * page).limit(20);
 
       return res.json(hikes.map((hike) => hike.toJson()));
