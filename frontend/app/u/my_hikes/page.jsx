@@ -6,25 +6,25 @@ import { getSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import SkeletonHikes from '@/components/u/hikes_skeleton';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import HikesCard from '@/components/u/hikes_card';
-import Link from 'next/link';
+import MyHikesCard from '@/components/u/my_hikes_card';
 
-export default function HomePage() {
+export default function MyHikesPage() {
   const router = useRouter();
   const [page, setPage] = useState(0);
   const [hikes, setHikes] = useState(null);
 
 
-  function getHikes(session, pageNum) {
-    fetch(`http://localhost:5000/hikes?page=${pageNum}`, {
+  function getMyHikes(session, pageNum) {
+    fetch(`http://localhost:5000/my_hikes?page=${pageNum}`, {
       headers: {
         'X-Hikeroo-Token': session.user.token,
+        'Cookie': `Hikeroo-Token=MyToken`,
       },
       credentials: 'include',
     }).then((res) => {
       if (res.ok) {
         res.json().then((hikesJson) => {
-          setHikes(hikesJson.map((hike) => <HikesCard hike={ hike } key={ hike.id }/>));
+          setHikes(hikesJson.map((hike) => <MyHikesCard hike={ hike } key={ hike.id }/>));
         });
       }
     }); 
@@ -33,7 +33,7 @@ export default function HomePage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        getHikes(session, page);
+        getMyHikes(session, page);
       } else {
         router.push('/auth/login');
       }
@@ -44,12 +44,7 @@ export default function HomePage() {
 
   return (
     <div className='px-5 py-3 space-y-10 flex flex-col'>
-      <div className='flex items-center justify-between'>
-        <h1 className='text-lg font-semibold'>Available Hikes</h1>
-        <Button asChild className='bg-green-600 hover:bg-green-500'>
-          <Link href='/u/home/new'>Create new</Link>
-        </Button>
-      </div>
+      <h1 className='text-lg font-semibold'>My Hikes</h1>
       <div className='flex flex-wrap gap-x-10 gap-y-10 justify-evenly'>
         { hikes ? hikes : skeletons }
       </div>

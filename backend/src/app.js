@@ -13,6 +13,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
+app.use(express.static('/public'));
 
 app.use(authRouter);
 app.use(hikeRouter);

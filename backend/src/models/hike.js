@@ -15,9 +15,7 @@ const hikeSchema = new mongoose.Schema({
     required: true,
   },
   description: String,
-  images: [{
-    filePath: String,
-  }],
+  image: String,
   country: {
     type: String,
     required: true,
@@ -62,6 +60,7 @@ const hikeSchema = new mongoose.Schema({
           startDate: this.startDate,
           duration: this.duration,
           hikers: this.hikers,
+	  messages: this.messages,
         }
       }
     }

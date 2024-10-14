@@ -1,3 +1,5 @@
+import fs from 'fs';
+import { v4 } from 'uuid';
 import Hike from '../models/hike';
 import Hiker from '../models/hiker';
 import authenticateUser from './utils';
@@ -7,7 +9,10 @@ class HikeController {
     const hiker = await authenticateUser(req, res);
 
     if (hiker) {
-      const { title, description, country, city, startDate, duration } = req.body;
+      console.log(req.fields);
+      const { title, description, country, city, startDate, duration } = JSON.parse(req.fields.json);
+      const { image } = req.files;
+
       const fields = {
         title,
         country,
@@ -17,11 +22,13 @@ class HikeController {
       };
       for (const field in fields) {
         if (!fields[field]) {
+          console.log('field missing')
           return res.status(400).json({ error: `Missing required field [${field}]` });
         }
       }
       const startDateObj = new Date(startDate);
       if (startDateObj.toString() === 'Invalid Date') {
+        console.log('Invalid date')
         return res.status(400).json({ error: 'Invalid date' });
       }
       const hike = new Hike({
@@ -32,6 +39,15 @@ class HikeController {
         startDate: startDateObj,
         duration,
       });
+
+      if (image) {
+        const fileName = v4();
+        const newFilePath = `./public/hike_images/${fileName}`;
+  
+        await fs.promises.rename(image.path, newFilePath);
+        hike.image = fileName;
+      }
+
       await hike.save();
       await Hike.updateOne({
         _id: hike._id,
@@ -59,10 +75,44 @@ class HikeController {
 
     if (hiker) {
       const { page } = req.query;
-      console.log(hiker, page);
       const hikes = await Hike.find({}).skip(20 * page).limit(20);
 
       return res.json(hikes.map((hike) => hike.toJson()));
+    }
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  static async getHike(req, res) {
+    const hiker = await authenticateUser(req, res);
+
+    if (hiker) {
+      const { id } = req.params;
+      const hike = await Hike.findById(id);
+
+      if (hike) {
+        const hikeJson = hike.toJson()
+	const hikersJson = [];
+        for (const { hikerId } of hikeJson.hikers) {
+	  const hikeMember = await Hiker.findById(hikerId);
+	  if (hikeMember) {
+	    hikersJson.push(hikeMember.toJson());
+	  }
+	}
+	hikeJson.hikers = hikersJson;
+	const messagesJson = [];
+	for (const { text, senderId } of hikeJson.messages) {
+	  const sender = await Hiker.findById(senderId);
+	  if (sender) {
+	    messagesJson.push({
+	      text,
+	      sender: sender.toJson()
+	    })
+	  }
+	}
+	hikeJson.messages = messagesJson;
+        return res.json(hikeJson);
+      }
+      return res.status(404).json({ error: 'Unrecognized ID' });
     }
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -102,11 +152,12 @@ class HikeController {
     const hiker = await authenticateUser(req, res);
 
     if (hiker) {
+      const { page } = req.query;
       const hikerHikes = await Hike.find({
         hikers: {
           $elemMatch: { hikerId: hiker._id },
         },
-      });
+      }).skip(20 * page).limit(20);
       return res.json(hikerHikes.map((hike) => hike.toJson()));
     }
     return res.status(401).json({ error: 'Unauthorized' });

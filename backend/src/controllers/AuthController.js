@@ -9,7 +9,7 @@ const SECRET = process.env.SECRET;
 
 class AuthController {
   static async signUp(req, res) {
-    const { email, password, firstName, lastName } = req.fields.json;
+    const { email, password, firstName, lastName } = JSON.parse(req.fields.json);
     const { image } = req.files;
 
     const fields = {

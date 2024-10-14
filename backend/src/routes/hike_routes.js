@@ -1,12 +1,15 @@
 import express from 'express';
 import HikeController from '../controllers/HikeController';
+import formidable from 'express-formidable';
 
 const hikeRouter = express.Router();
 hikeRouter.use(express.json())
 
 hikeRouter.get('/hikes', HikeController.showAllHikes);
 
-hikeRouter.post('/hikes', HikeController.createHike);
+hikeRouter.get('/hikes/:id', HikeController.getHike);
+
+hikeRouter.post('/hikes', formidable(), HikeController.createHike);
 
 hikeRouter.get('/my_hikes', HikeController.showMyHikes);
 
