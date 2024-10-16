@@ -17,21 +17,24 @@ Go into the hikeroo directory
 ```bash
 cd hikeroo/
 ```
-Install dependencies
-```bash
-npm install
-```
-start the back-end express app, and provide a secret for JWT authentication
+Install dependencies for the backend
 ```bash
 cd backend/
+npm install
+```
+Start the back-end express app, and provide a secret for JWT authentication
+```bash
 SECRET="YOUR SECRET" npm run dev src/app.js
 ```
-In another terminal, start the front-end next application
+In another terminal, install dependencies for the frontend
 ```bash
 cd frontend/
+npm install
+```
+Start the front-end NextJS app
+```bash
 npm run dev
 ```
-
 ## Technologies
 ### Back-end
 NodeJS (Express)\
