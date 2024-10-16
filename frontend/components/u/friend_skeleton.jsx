@@ -1,6 +1,6 @@
 import { Skeleton } from '../ui/skeleton';
  
-export default function SkeletonHikeMember() {
+export default function SkeletonFriend() {
   return (
     <div className='bg-white shadow-lg flex justify-between px-3 py-2 items-center rounded-md'>
       <div className='flex gap-x-2 items-center'>

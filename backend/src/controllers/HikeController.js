@@ -9,7 +9,6 @@ class HikeController {
     const hiker = await authenticateUser(req, res);
 
     if (hiker) {
-      console.log(req.fields);
       const { title, description, country, city, startDate, duration } = JSON.parse(req.fields.json);
       const { image } = req.files;
 
@@ -140,6 +139,13 @@ class HikeController {
               hikers: { hikerId: hiker._id },
             },
           });
+	  await Hiker.updateOne({
+	    _id: hiker._id
+	  }, {
+	    $pull: {
+	      invites: { hikeId: hike._id }
+	    }
+	  });
         }
         return res.json({});
       }

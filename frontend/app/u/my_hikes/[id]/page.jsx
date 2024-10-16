@@ -21,14 +21,17 @@ import SkeletonHike from '@/components/u/hike_skeleton';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSession } from 'next-auth/react';
-import HikeDetails from '@/components/u/hike_details';
+import MyHikeDetails from '@/components/u/my_hike_details';
 import HikeMember from '@/components/u/hike_member';
 import SkeletonHikeMember from '@/components/u/hike_member_skeleton';
+import SkeletonSendInvite from '@/components/u/send_invite_skeleton';
+import SendHikeInvite from '@/components/u/send_invite';
 
 export default function MyHikePage({ params }) {
   const { id } = params;
   const [hike, setHike] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [userToken, setUserToken] = useState(null);
   const [tab, setTab] = useState('hikeDetails');
   const router = useRouter();
   const onTabChange = (value) => {
@@ -40,6 +43,7 @@ export default function MyHikePage({ params }) {
         router.push('/auth/login');
       } else {
         setUserId(session.user.id);
+        setUserToken(session.user.token);
         if (!hike) {
           fetch(`http://localhost:5000/hikes/${id}`, {
             headers: {
@@ -49,7 +53,6 @@ export default function MyHikePage({ params }) {
           }).then((res) => {
             if (res.ok) {
               res.json().then((content) => {
-                console.log(content);
                 setHike(content);
               });
             }
@@ -62,26 +65,27 @@ export default function MyHikePage({ params }) {
 
   return (
     <Tabs value={ tab } onValueChange={onTabChange} className='w-full'>
-      <TabsList className='grid w-full grid-cols-3'>
+      <TabsList className='grid w-full grid-cols-4'>
         <TabsTrigger value='hikeDetails'>Details</TabsTrigger>
         <TabsTrigger value='hikeMembers'>Members</TabsTrigger>
+        <TabsTrigger value='hikeInvite'>Invite</TabsTrigger>
         <TabsTrigger value='hikeChat'>Chat</TabsTrigger>
       </TabsList>
       <TabsContent value='hikeDetails'>
         <div className='h-full'>
           { !hike && <SkeletonHike/> }
-          { hike && <HikeDetails hike={ hike }/> }
+          { hike && <MyHikeDetails hike={ hike }/> }
         </div>
       </TabsContent>
       <TabsContent value='hikeMembers'>
         <div className='mt-10 space-y-3'>
-          { hike ? hike.hikers.map((hiker, index) => {
-            console.log(hiker.id, userId);
-            if (hiker.id !== userId) {
-              return <HikeMember key={ index } hiker={ hiker }/>
-            }
-            return '';
-          }) : hikeMembersSkeletons }
+          { hike ? hike.hikers.map((hiker, index) =>  <HikeMember key={ index } hiker={ hiker } userId={userId} />) : hikeMembersSkeletons }
+        </div>
+      </TabsContent>
+      <TabsContent value='hikeInvite'>
+        <div className='h-full'>
+          { !hike && <SkeletonSendInvite/> }
+          { hike && <SendHikeInvite token={ userToken } hikeId={ id }/> }
         </div>
       </TabsContent>
       <TabsContent value='hikeChat'>

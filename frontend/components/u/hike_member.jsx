@@ -5,7 +5,7 @@ import {
 } from '@/components/ui/avatar';
 import FriendRequestButton from './f_request_button';
 
-export default function HikeMember({ hiker }) {
+export default function HikeMember({ hiker, userId }) {
   return (
     <div className='bg-white border-2 flex justify-between px-5 py-3 items-center rounded-md'>
       <div className='flex gap-x-1 items-center'>
@@ -15,7 +15,7 @@ export default function HikeMember({ hiker }) {
         </Avatar>
         <p className='font-light'>{ hiker.firstName.concat(' '.concat(hiker.lastName)) }</p>
       </div>
-      <FriendRequestButton id={hiker.id}/>
+      {(hiker.id !== userId) && <FriendRequestButton id={hiker.id}/>}
     </div>
   )
 }

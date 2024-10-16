@@ -16,9 +16,9 @@ export default function HikesCard({ hike }) {
           <p className='font-light'><span className='font-semibold text-black'>Duration</span>:{' '.concat(hike.duration)} Days</p>
         </div>
       </div>
-      <Link href={`/u/hikes/${hike.id}`}>
-        <Button className='flex w-full justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'>View</Button>
-      </Link>
+      <Button asChild className='flex w-full justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'>
+        <Link href={`/u/hikes/${hike.id}`}>View</Link>
+      </Button>
     </div>
   )
 }
