@@ -31,9 +31,6 @@ export default function RegisterPage() {
       method: 'POST',
       body: formData,
     });
-
-    const userInfo = await res.json();
-    console.log(userInfo);
     router.push('/auth/login');
   }
 

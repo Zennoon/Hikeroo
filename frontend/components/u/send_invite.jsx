@@ -29,7 +29,6 @@ export default function SendHikeInvite({ token, hikeId }) {
 
   const sendInvite = () => {
     getSession().then((session) => {
-      console.log(hikeId, value);
       fetch('http://localhost:5000/invites', {
         method: 'POST',
         headers: {

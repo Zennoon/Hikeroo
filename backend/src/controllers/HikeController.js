@@ -21,13 +21,11 @@ class HikeController {
       };
       for (const field in fields) {
         if (!fields[field]) {
-          console.log('field missing')
           return res.status(400).json({ error: `Missing required field [${field}]` });
         }
       }
       const startDateObj = new Date(startDate);
       if (startDateObj.toString() === 'Invalid Date') {
-        console.log('Invalid date')
         return res.status(400).json({ error: 'Invalid date' });
       }
       const hike = new Hike({

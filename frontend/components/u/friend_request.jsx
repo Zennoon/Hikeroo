@@ -7,7 +7,6 @@ import { Button } from '../ui/button';
 export default function FriendRequest({ token, fRequest }) {
   const [accepted, setAccepted] = useState(false);
   const [declined, setDeclined] = useState(false);
-  console.log(token);
 
   const acceptFriendRequest = () => {
     getSession().then((session) => {
