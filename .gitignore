@@ -132,3 +132,6 @@ dist
 # json files and data fillers
 mock_data.json
 fill_data.py
+
+# images
+public/*

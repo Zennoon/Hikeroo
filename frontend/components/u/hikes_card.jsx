@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function HikesCard({ hike }) {
   return (
     <div className="flex flex-col gap-y-6 items-center shadow-xl max-w-[400px] bg-white py-8 px-10 rounded-xl flex-grow" id={hike.id}>
-      <img src={hike.image ? `http://localhost:5000/profile_pics/${hike.image}` : '/images/default_hike.avif'} alt="An image representing the hike" className='h-40 w-40 rounded-full'/>
+      <img src={hike.image ? `http://localhost:5000/hike_images/${hike.image}` : '/images/default_hike.avif'} alt="An image representing the hike" className='h-40 w-40 rounded-full'/>
       <div className="gap-y-5 flex flex-col items-center">
         <h1 className='text-semibold text-xl'>{ hike.title }</h1>
         <div className='rounded-3xl p-3 border border-green-300'>

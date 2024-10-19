@@ -61,6 +61,7 @@ const hikeSchema = new mongoose.Schema({
           duration: this.duration,
           hikers: this.hikers,
 	  messages: this.messages,
+	  image: this.image,
         }
       }
     }

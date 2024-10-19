@@ -3,6 +3,7 @@ import cors from 'cors';
 import http from 'http';
 import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 import authRouter from './routes/auth_routes';
 import hikeRouter from './routes/hike_routes';
 import hikerRouter from './routes/hiker_routes';
@@ -17,7 +18,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
-app.use(express.static('/public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(authRouter);
 app.use(hikeRouter);

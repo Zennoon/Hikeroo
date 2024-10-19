@@ -41,7 +41,7 @@ export default function NewHikePage() {
     }));
 
     if (data.image) {
-      formData.append('image', image);
+      formData.append('image', data.image);
     }
     // I should create a state for the session that gets assigned inside useEffect
     getSession().then((userSession) => {
@@ -97,7 +97,7 @@ export default function NewHikePage() {
                   required
                   autoComplete="title"
                   onChange={(e) => {setData({ ...data, title: e.target.value })}}
-                  className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  className="px-2 outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function NewHikePage() {
                   placeholder='Join us for a trip to remember to one of the tallest mountains in Africa, and the tallest in Ethiopia!'
                   autoComplete="description"
                   onChange={(e) => {setData({ ...data, description: e.target.value })}}
-                  className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  className="px-2 outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function NewHikePage() {
                   placeholder='Ethiopia'
                   autoComplete="country"
                   onChange={(e) => {setData({ ...data, country: e.target.value })}}
-                  className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  className="px-2 outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -154,7 +154,7 @@ export default function NewHikePage() {
                   placeholder='Gondar'
                   autoComplete="city"
                   onChange={(e) => {setData({ ...data, city: e.target.value })}}
-                  className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  className="px-2 outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function NewHikePage() {
                   placeholder='1'
                   autoComplete="duration"
                   onChange={(e) => {setData({ ...data, duration: e.target.value })}}
-                  className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  className="px-2 outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -211,8 +211,10 @@ export default function NewHikePage() {
                   name="image"
                   type="file"
                   autoComplete="image"
-                  onChange={(e) => {setData({ ...data, image: e.target.files[0] })}}
-                  className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  onChange={(e) => setData((prevData) => {
+		    return {...prevData, image: e.target.files[0]}
+	          })}
+                  className="px-2 outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>

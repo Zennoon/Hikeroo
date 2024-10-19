@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Smile } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -28,6 +28,7 @@ import SkeletonSendInvite from '@/components/u/send_invite_skeleton';
 import SendHikeInvite from '@/components/u/send_invite';
 import HikeMessage from '@/components/u/hike_message';
 import SkeletonHikeMessage from '@/components/u/hike_message_skeleton';
+import EmojiPicker from 'emoji-picker-react';
 
 export default function MyHikePage({ params }) {
   const { id } = params;
@@ -42,6 +43,8 @@ export default function MyHikePage({ params }) {
     setTab(value);
   }
   const [socket, setSocket] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(null);
+
   useEffect(() => {
     getSession().then((session) => {
       if (!session) {
@@ -67,6 +70,11 @@ export default function MyHikePage({ params }) {
         }
       }
     });
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -87,7 +95,14 @@ export default function MyHikePage({ params }) {
       });
       setMessage('');
     }
+  };
+
+  const onEmojiClick = (emojiObject, e) => {
+    console.log(emojiObject, e);
+    setMessage((prevMessage) => prevMessage + emojiObject.emoji);
+    setShowEmojiPicker(false);
   }
+
   const hikeMembersSkeletons = new Array(8).fill(null).map((_, index) => <SkeletonHikeMember key={ index }/>);
 
   return (
@@ -128,11 +143,17 @@ export default function MyHikePage({ params }) {
               </div>
             </ScrollArea>
             <div className="flex w-full max-w-sm items-center self-center space-x-2">
-              <Input className='px-2 outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6' type="text" placeholder="Type a message" value={ message } onChange={(e) => {setMessage(e.target.value)}}/>
+              <div className='flex border p-1 rounded-md'>
+                <button onClick={() => {setShowEmojiPicker(!showEmojiPicker)}} className='bg-transparent p-1'>
+                  <Smile className='text-gray-200 hover:text-gray-300'/>
+                </button>
+                <Input className='px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6' type="text" placeholder="Type a message" value={ message } onChange={(e) => {setMessage(e.target.value)}}/>
+              </div>
               <Button className='bg-green-600 text-white hover:bg-green-400 h-12 w-12 py-0 rounded-full' onClick={sendMessage} disabled={ !message }>
                 <ArrowUp className='h-20'/>
               </Button>
             </div>
+	    { showEmojiPicker && <EmojiPicker onEmojiClick={onEmojiClick} emojiStyle='twitter' className='self-center'/> }
             </div>
           </CardContent>
         </Card>
