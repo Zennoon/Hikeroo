@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSession } from 'next-auth/react'
+import { getSession } from 'next-auth/react';
 
 export default function NewHikePage() {
   const [date, setDate] = useState();
@@ -25,48 +25,56 @@ export default function NewHikePage() {
     duration: '',
     image: '',
   });
+  const [session, setSession] = useState(null);
+  const [onSubmit, setOnSubmit] = useState(() => () => {});
   const router = useRouter();
   
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-
-    formData.append('json', JSON.stringify({
-      title: data.title,
-      description: data.description,
-      country: data.country,
-      city: data.city,
-      startDate: date,
-      duration: data.duration,
-    }));
-
-    if (data.image) {
-      formData.append('image', data.image);
-    }
-    // I should create a state for the session that gets assigned inside useEffect
-    getSession().then((userSession) => {
-      fetch('http://localhost:5000/hikes', {
-        method: 'POST',
-        headers: {
-          'X-Hikeroo-Token': userSession?.user.token,
-        },
-        credentials: 'include',
-        body: formData,
-      }).then((res) => {
-        if (res.ok) {
-          router.push('/u/home');
-        }
-      })
-    });
-  }
-
   useEffect(() => {
     getSession().then((session) => {
-      if (!session) {
+      if (session) {
+        setSession(session);
+      } else {
         router.push('/auth/login');
       }
-    })
+    });
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      setOnSubmit(() => (e, data, date) => {
+        e.preventDefault();
+        const formData = new FormData();
+
+        formData.append('json', JSON.stringify({
+          title: data.title,
+          description: data.description,
+          country: data.country,
+          city: data.city,
+          startDate: date,
+          duration: data.duration,
+        }));
+
+        if (data.image) {
+          formData.append('image', data.image);
+        }
+
+        fetch('http://localhost:5000/hikes', {
+          method: 'POST',
+          headers: {
+            'X-Hikeroo-Token': session.user.token,
+          },
+          credentials: 'include',
+          body: formData,
+        }).then((res) => {
+          if (res.ok) {
+            res.json().then((content) => {
+              router.push(`/u/my_hikes/${content.id}`);
+            });
+          }
+        });
+      });
+    }
+  }, [session]);
 
   return (
     <div>
@@ -82,7 +90,7 @@ export default function NewHikePage() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form onSubmit={onSubmit} className="space-y-6" encType='multipart/form-data'>
+          <form onSubmit={(e) => {onSubmit(e, data, date)}} className="space-y-6" encType='multipart/form-data'>
             <div>
               <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">
                 Title

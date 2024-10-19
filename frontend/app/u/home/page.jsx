@@ -11,34 +11,36 @@ import Link from 'next/link';
 
 export default function HomePage() {
   const router = useRouter();
+  const [session, setSession] = useState(null);
   const [page, setPage] = useState(0);
   const [hikes, setHikes] = useState(null);
-
-
-  function getHikes(session, pageNum) {
-    fetch(`http://localhost:5000/hikes?page=${pageNum}`, {
-      headers: {
-        'X-Hikeroo-Token': session.user.token,
-      },
-      credentials: 'include',
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((hikesJson) => {
-          setHikes(hikesJson.map((hike) => <HikesCard hike={ hike } key={ hike.id }/>));
-        });
-      }
-    }); 
-  }
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        getHikes(session, page);
+        setSession(session);
       } else {
         router.push('/auth/login');
       }
     })
-  }, [page]);
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      fetch(`http://localhost:5000/hikes?page=${page}`, {
+        headers: {
+          'X-Hikeroo-Token': session.user.token,
+        },
+        credentials: 'include',
+      }).then((res) => {
+        if (res.ok) {
+          res.json().then((hikesJson) => {
+            setHikes(hikesJson.map((hike) => <HikesCard hike={ hike } key={ hike.id }/>));
+          });
+        }
+      }); 
+    }
+  }, [session, page]);
 
   const skeletons = new Array(6).fill(null).map((_, index) => <SkeletonHikes key={ index }/>);
 

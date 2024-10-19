@@ -12,7 +12,6 @@ class HikeController {
       const { title, description, country, city, startDate, duration } = JSON.parse(req.fields.json);
       const { image } = req.files;
 
-      console.log(image);
       const fields = {
         title,
         country,
