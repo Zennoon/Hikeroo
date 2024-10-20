@@ -15,6 +15,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SkeletonHike from '@/components/u/hike_skeleton';
 import { useEffect, useState } from 'react';
@@ -43,7 +44,6 @@ export default function MyHikePage({ params }) {
     setTab(value);
   }
   const [socket, setSocket] = useState(null);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(null);
 
   useEffect(() => {
     getSession().then((session) => {
@@ -100,7 +100,6 @@ export default function MyHikePage({ params }) {
   const onEmojiClick = (emojiObject, e) => {
     console.log(emojiObject, e);
     setMessage((prevMessage) => prevMessage + emojiObject.emoji);
-    setShowEmojiPicker(false);
   }
 
   const hikeMembersSkeletons = new Array(8).fill(null).map((_, index) => <SkeletonHikeMember key={ index }/>);
@@ -137,23 +136,27 @@ export default function MyHikePage({ params }) {
           </CardHeader>
           <CardContent className='flex flex-col space-y-2 w-full'>
             <div className='p-2 border rounded-lg self-center flex flex-col w-full lg:w-1/2'>
-            <ScrollArea className='p-2 h-72 w-full self-center'>
-              <div className='flex flex-col gap-y-2 px-2 bg-white'>
-                { messages ? messages.map((message, index) => <HikeMessage className='m-3' key={ index } message={ message } userId={ userId } />) : new Array(8).fill(null).map((_, index) => <SkeletonHikeMessage key={ index } index={ index }/>) }
+              <ScrollArea className='p-2 h-72 w-full self-center'>
+                <div className='flex flex-col gap-y-2 px-2 bg-white'>
+                  { messages ? messages.map((message, index) => <HikeMessage className='m-3' key={ index } message={ message } userId={ userId } />) : new Array(8).fill(null).map((_, index) => <SkeletonHikeMessage key={ index } index={ index }/>) }
+                </div>
+              </ScrollArea>
+              <div className="flex w-full max-w-sm items-center self-center space-x-2">
+                <div className='flex border p-1.5 space-x-1 rounded-md'>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Smile className='text-gray-200 hover:text-gray-300'/>
+                    </PopoverTrigger>
+                    <PopoverContent className='p-0 shadow-none w-full'>
+                      <EmojiPicker onEmojiClick={onEmojiClick} emojiStyle='twitter' className='self-center'/>
+                    </PopoverContent>
+                  </Popover>
+                  <Input className='px-2 w-full focus:border-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 focus:border-green-500 focus:outline-none focus:ring-0' type="text" placeholder="Type a message" value={ message } onChange={(e) => {setMessage(e.target.value)}}/>
+                </div>
+                <Button className='bg-green-600 text-white hover:bg-green-400 h-12 w-12 py-0 rounded-full' onClick={sendMessage} disabled={ !message }>
+                  <ArrowUp className='h-20'/>
+                </Button>
               </div>
-            </ScrollArea>
-            <div className="flex w-full max-w-sm items-center self-center space-x-2">
-              <div className='flex border p-1 rounded-md'>
-                <button onClick={() => {setShowEmojiPicker(!showEmojiPicker)}} className='bg-transparent p-1'>
-                  <Smile className='text-gray-200 hover:text-gray-300'/>
-                </button>
-                <Input className='px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6' type="text" placeholder="Type a message" value={ message } onChange={(e) => {setMessage(e.target.value)}}/>
-              </div>
-              <Button className='bg-green-600 text-white hover:bg-green-400 h-12 w-12 py-0 rounded-full' onClick={sendMessage} disabled={ !message }>
-                <ArrowUp className='h-20'/>
-              </Button>
-            </div>
-	    { showEmojiPicker && <EmojiPicker onEmojiClick={onEmojiClick} emojiStyle='twitter' className='self-center'/> }
             </div>
           </CardContent>
         </Card>

@@ -6,7 +6,7 @@ import {
   SheetTitle,
   SheetContent,
   SheetHeader,
-  SheetTrigger
+  SheetTrigger,
 } from '../ui/sheet';
 import { Dialog, DialogClose } from '../ui/dialog';
 import {
@@ -16,6 +16,7 @@ import {
   Contact,
   MailQuestion,
   Send,
+  UserPen,
 } from 'lucide-react';
 
 export default function DashboardNavbar({ children }) {
@@ -73,6 +74,14 @@ export default function DashboardNavbar({ children }) {
                   <Button variant='outline' className='w-full h-16'>
                     <Send className='mr-2 h-4 w-4'/>
                     Invites
+                  </Button>
+                </Link>
+              </DialogClose>
+              <DialogClose asChild>
+                <Link href='/u/profile'>
+                  <Button variant='outline' className='w-full h-16'>
+                    <UserPen className='mr-2 h-4 w-4'/>
+                    Profile
                   </Button>
                 </Link>
               </DialogClose>

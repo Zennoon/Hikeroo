@@ -10,6 +10,7 @@ export default function MyHikeDetails({ hike }) {
         <div className='flex flex-col gap-y-5 items-start'>
           <h1 className='text-3xl'>{ hike.title }</h1>
           <p className='font-light'>{ hike.description }</p>
+          <p className='rounded-3xl p-3 border border-green-300'>{ hike.country.concat(', '.concat(hike.city)) }</p>
         </div>
       </div>
       <div className='flex justify-between flex-wrap gap-y-3'>
