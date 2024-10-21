@@ -98,15 +98,15 @@ export default function DashboardSidebar() {
               Invites
             </Link>
           </nav>
-          { hiker && <Link className={clsx('flex items-center gap-2 rounded-lg p-4 text-gray-500 transition-all hover:text-gray-900 dark:hover:text-gray-50 h-16', {
-              'flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-gray-900 transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50 h-16': pathname === '/u/profile'
+          { hiker && <Link className={clsx('mx-3 flex items-center gap-2 rounded-lg text-gray-500 transition-all hover:text-gray-900 dark:hover:text-gray-50 p-4', {
+              'mx-3 flex items-center gap-2 rounded-lg bg-green-100 text-black font-semibold transition-all p-4': pathname === '/u/profile'
             })} href='/u/profile'>
-              <div className='w-full flex items-center gap-x-2'>
+              <div className='w-full flex items-center gap-x-3'>
                 <Avatar className='h-14 w-14'>
                   <AvatarImage src={ hiker.image ? `http://localhost:5000/profile_pics/${hiker.image}` : '/images/default_hiker.jpg' } alt="Profile picture of hiker"/>
                   <AvatarFallback>{ hiker.firstName[0] }{ hiker.lastName[0] }</AvatarFallback>
                 </Avatar>
-                <p className='font-light'>{ hiker.firstName.concat(' '.concat(hiker.lastName)) }</p>
+                <p>{ hiker.firstName.concat(' '.concat(hiker.lastName)) }</p>
               </div>
             </Link> }
         </div>

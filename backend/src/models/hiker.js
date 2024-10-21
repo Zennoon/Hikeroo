@@ -55,6 +55,7 @@ const hikerSchema = new mongoose.Schema({
           friends: this.friends,
           friendRequests: this.friendRequests,
           invites: this.invites,
+	  image: this.image,
         }
       }
     }

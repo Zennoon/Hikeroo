@@ -43,9 +43,9 @@ export default function FriendRequest({ token, fRequest }) {
   }
 
   return (
-    <div className='bg-white border-1 flex justify-between px-5 py-3 items-center rounded-md'>
-      <div className='flex gap-x-1 items-center'>
-        <Avatar className='h-20 w-20'>
+    <div className='bg-white border-1 flex justify-between px-8 py-5 items-center rounded-md'>
+      <div className='flex gap-x-3 items-center'>
+        <Avatar className='h-14 w-14'>
           <AvatarImage src={ fRequest.image ? `http://localhost:5000/profile_pics/${fRequest.image}` : '/images/default_hiker.jpg' } alt="Profile picture of hiker"/>
           <AvatarFallback>{ fRequest.firstName[0] }{ fRequest.lastName[0] }</AvatarFallback>
         </Avatar>
