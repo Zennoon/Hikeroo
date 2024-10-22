@@ -40,7 +40,7 @@ class HikeController {
       if (image) {
         const fileName = v4();
         const newFilePath = `./public/hike_images/${fileName}`;
-  
+
         await fs.promises.rename(image.path, newFilePath);
         hike.image = fileName;
       }
@@ -67,12 +67,35 @@ class HikeController {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  static async showAllHikes(req, res) {
+  static async showHikes(req, res) {
     const hiker = await authenticateUser(req, res);
 
     if (hiker) {
       const { page } = req.query;
-      const hikes = await Hike.find({}).skip(20 * page).limit(20);
+      const filter = req.body;
+      const query = {};
+
+      for (const field of ['country', 'city']) {
+        if (filter[field]) {
+          query[field] = filter[field];
+        }
+      }
+      if (filter.before) {
+        query.startDate = { "$lte": new Date(filter.before) }
+      }
+
+      if (filter.after) {
+        query.startDate = { ...query.startDate, "$gte": new Date(filter.after) }
+      }
+
+      if (filter.durationLessThan) {
+        query.duration = { "$lte": Number(filter.durationLessThan) }
+      }
+
+      if (filter.durationGreaterThan) {
+        query.duration = { ...query.duration, "$gte": Number(filter.durationGreaterThan) }
+      }
+      const hikes = await Hike.find(query).skip(20 * page).limit(20);
 
       return res.json(hikes.map((hike) => hike.toJson()));
     }
